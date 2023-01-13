@@ -1,0 +1,11 @@
+[microk8s_HA]
+microk8s-controller ansible_ssh_host=10.0.2.20
+
+[microk8s_WORKERS]
+microk8s-node1 ansible_ssh_host=10.0.2.21
+microk8s-node2 ansible_ssh_host=10.0.2.22
+
+[all:vars]
+ansible_ssh_user=fabrice
+ansible_ssh_private_key_file=~/.ssh/id_ed25519
+microk8s_version=1.23/stable

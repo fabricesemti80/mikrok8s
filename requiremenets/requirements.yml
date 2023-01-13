@@ -1,0 +1,5 @@
+# ansible-galaxy install -r /home/fabrice/projects/dev/ansible/requiremenets/requirements.yml
+
+# ansible-galaxy install istvano.microk8s
+
+- src: https://github.com/istvano/ansible_role_microk8s

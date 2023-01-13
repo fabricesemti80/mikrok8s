@@ -1,0 +1,16 @@
+# https://github.com/istvano/ansible_role_microk8s
+- hosts: all
+  roles:
+    - role: 'istvano.microk8s'
+      vars:
+        microk8s_plugins:
+          # https://microk8s.io/docs/addons
+          dns: "1.1.1.1"            # CoreDNS
+          ingress: true             # Ingress controller for external access
+          metrics-server: true      # K8s Metrics Server for API access to service metrics
+          cert-manager: true
+          openebs: true             # openebs storage
+          portainer: true           # Container management dashboard
+          helm3: true               # Helm 3 - Kubernetes package manager
+          rbac: true                # Role-Based Access Control for authorisation
+          storage: false            # Storage class; allocates storage from host directory
