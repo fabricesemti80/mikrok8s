@@ -13,4 +13,4 @@
           portainer: true           # Container management dashboard
           helm3: true               # Helm 3 - Kubernetes package manager
           rbac: true                # Role-Based Access Control for authorisation
-          storage: false            # Storage class; allocates storage from host directory
+          storage: true           # Storage class; allocates storage from host directory
