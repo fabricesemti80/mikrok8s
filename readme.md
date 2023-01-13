@@ -1,16 +1,22 @@
 # Documentation
 
-<https://medium.com/@emilfabrice/deploy-microk8s-kubernetes-on-ubuntu-with-ansible-844f22e154a0>
+## Cluster deployment
+---
 
-Additionally, as at the time of writing installation of `metallb` does not work via Ansible, it should be done manually on the controll node:
+To start a fresh MicroK8s cluster, please follow [the guide here](https://medium.com/@emilfabrice/deploy-microk8s-kubernetes-on-ubuntu-with-ansible-844f22e154a0)
+
+
+Additionally, as at the time of writing installation of `metallb` on MicroK8S [does not work via Ansible](https://github.com/istvano/ansible_role_microk8s/issues/35), it should be done manually on the controll node:
 
 ```bash
 microk8s enable metallb:10.0.2.200-10.0.2.220
 ```
+*metallb will allow exposing services using load balancers, eliminating the need of port forwarding!*
 
 ## Add sample Helm application
+---
 
-Follow steps [here](https://artifacthub.io/packages/helm/bitnami/nginx) with some ammendments:
+Follow steps [here](https://artifacthub.io/packages/helm/bitnami/nginx) with some adjustments:
 
 ```bash
 # install the bitnami chart repo
@@ -31,12 +37,13 @@ As per the instructions displayed on the screen, to access the deployed webserve
     export SERVICE_PORT=$(kubectl get --namespace default -o jsonpath="{.spec.ports[0].port}" services webserver-nginx)
     export SERVICE_IP=$(kubectl get svc --namespace default webserver-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
     echo "http://${SERVICE_IP}:${SERVICE_PORT}"
-    #http://10.0.2.200:80
+    ## http://10.0.2.200:80
 ```
 
 At this point the webserver should be accessible at the above ip/port combination.
 
 ## Helm with values
+---
 
 The previous example was deploying Nginx with the default values. Let's see how can we deploy a different application with specified values. In this case WordPress.
 
@@ -69,11 +76,18 @@ echo Password: $(kubectl get secret --namespace default wordpress -o jsonpath="{
 
 ```
 
-## Deploy Hashicorp - Vault
+## A more complex Helm deployment:Hashicorp - Vault
+---
 
-https://developer.hashicorp.com/vault/tutorials/kubernetes/kubernetes-raft-deployment-guide
+[refernce](https://developer.hashicorp.com/vault/tutorials/kubernetes/kubernetes-raft-deployment-guide)
 
 ```bash
+
+# create namespace
+kubectl create namespace vault
+
+# add Helm repo
+helm repo add hashicorp https://helm.releases.hashicorp.com
 
 # install Vault
 helm install vault hashicorp/vault --namespace vault --values=helm/vault-values.yml
@@ -102,15 +116,24 @@ kubectl exec -ti vault-0 -- vault operator init
 
 After the helm install, vault's liveness probe will fail. It requires initialisation - this will provide the initial token for login - and unsealing, with the keys generated during initialisation.
 
-Once it is unsealed (3x), you should be able to port-forward vault, and access it from the browser.
+Once it is unsealed (3x), you should be able to port-forward vault, and access it from the browser, or - if you followed the previous steps and enabled `metallb` - expose it using the load balancer range
 
-- You can also do `brew install vault` to install the command line interface and interact with it.
+> Important: you may want to store the token and the keys that is outputed at `vault operator init` command, as you will need these to use the command line tool.
 
-- Next export the vault token with `export VAULT_TOKEN=<your vault token>`
+### Working with the Vault
 
-- And export the loadbalanced address of the vault with `export VAULT_ADDR='http://10.0.2.200:8200'`
+You can use `brew install vault` to install the command line interface and interact with the Hashicorp vault.
 
-- at this point `vault status` should display the status of the vault
+In order to do this, you will need to store two env variables:
+
+```bash
+# replace this with the token from the previous step
+export VAULT_TOKEN=<your vault token>
+# replace the IP with what Metallb allocated (in a production environment this should be fixed with the "loadBalancerIP:" value in the helm values)
+export VAULT_ADDR='http://10.0.2.200:8200'
+```
+
+At this point `vault status` should display the status of the vault
 
 ```bash
 fabrice in 🌐 central-1 in mikrok8s on  main [!?] took 2s
