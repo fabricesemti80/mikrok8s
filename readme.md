@@ -1,7 +1,7 @@
 # Documentation
 
 ## Cluster deployment
----
+
 
 To start a fresh MicroK8s cluster, please follow [the guide here](https://medium.com/@emilfabrice/deploy-microk8s-kubernetes-on-ubuntu-with-ansible-844f22e154a0)
 
@@ -14,7 +14,7 @@ microk8s enable metallb:10.0.2.200-10.0.2.220
 *metallb will allow exposing services using load balancers, eliminating the need of port forwarding!*
 
 ## Add sample Helm application
----
+
 
 Follow steps [here](https://artifacthub.io/packages/helm/bitnami/nginx) with some adjustments:
 
@@ -43,7 +43,7 @@ As per the instructions displayed on the screen, to access the deployed webserve
 At this point the webserver should be accessible at the above ip/port combination.
 
 ## Helm with values
----
+
 
 The previous example was deploying Nginx with the default values. Let's see how can we deploy a different application with specified values. In this case WordPress.
 
@@ -77,7 +77,7 @@ echo Password: $(kubectl get secret --namespace default wordpress -o jsonpath="{
 ```
 
 ## A more complex Helm deployment:Hashicorp - Vault
----
+
 
 [refernce](https://developer.hashicorp.com/vault/tutorials/kubernetes/kubernetes-raft-deployment-guide)
 
@@ -100,7 +100,7 @@ kubectl exec -ti vault-0 -- vault operator init
  kubectl exec -ti vault-0 -- vault operator unseal
 ##Unseal Key (will be hidden):
 ##Key                Value
-##---                -----
+##---                --
 ##Seal Type          shamir
 ##Initialized        true
 ##Sealed             true
